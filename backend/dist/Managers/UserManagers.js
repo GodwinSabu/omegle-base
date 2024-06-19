@@ -12,9 +12,15 @@ class UserManger {
         this.users.push({
             name, socket
         });
+        this.queue.push(socket.id);
+        socket.send("lobby");
+        this.clearQueue();
+        this.initHandlers(socket);
     }
     removeUser(socketId) {
-        this.users = this.users.filter(x => x.socket.id === socketId);
+        const user = this.users.find(x => x.socket.id === socketId);
+        this.users = this.users.filter(x => x.socket.id !== socketId);
+        this.queue = this.queue.filter(x => x === socketId);
     }
     clearQueue() {
         console.log("inside clear queues");
@@ -36,9 +42,11 @@ class UserManger {
     }
     initHandlers(socket) {
         socket.on("offer", ({ sdp, roomId }) => {
+            console.log("offer rectiver ");
             this.roomManager.onOffer(roomId, sdp);
         });
         socket.on("answer", ({ sdp, roomId }) => {
+            console.log("answer rectiver ");
             this.roomManager.onAnswer(roomId, sdp);
         });
     }

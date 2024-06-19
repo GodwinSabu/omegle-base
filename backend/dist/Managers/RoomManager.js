@@ -7,7 +7,7 @@ class RoomManger {
         this.rooms = new Map();
     }
     createRoom(user1, user2) {
-        const roomId = this.generate();
+        const roomId = this.generate().toString();
         this.rooms.set(roomId.toString(), {
             user1,
             user2
@@ -19,13 +19,15 @@ class RoomManger {
     onOffer(roomId, sdp) {
         const room = this.rooms.get(roomId);
         room === null || room === void 0 ? void 0 : room.user2.socket.emit("offer", {
-            sdp
+            sdp,
+            roomId
         });
     }
     onAnswer(roomId, sdp) {
         const room = this.rooms.get(roomId);
         room === null || room === void 0 ? void 0 : room.user1.socket.emit("answer", {
-            sdp
+            sdp,
+            roomId
         });
     }
     generate() {
